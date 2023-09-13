@@ -1,59 +1,28 @@
-//Create a web server
-const express = require('express');
-const app = express();
+//Create web server
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
+var path = require('path');
+var fs = require('fs');
+var port = 3000;
+var comments = [];
 
-//Create a port
-const port = 3000;
+// Serve static files
+app.use(express.static(__dirname + '/public'));
 
-//Create a variable to store comments
-const comments = [
-    {
-        name: 'John',
-        comment: 'Hello World!'
-    },
-    {
-        name: 'Mary',
-        comment: 'Hello Universe!'
-    }
-];
+// Parse application/json
+app.use(bodyParser.json());
 
-//Create a route to get all comments
-app.get('/comments', (req, res) => {
-    res.send(comments);
+// Parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// GET /comments
+app.get('/comments', function(req, res) {
+    console.log('GET /comments');
+    res.status(200).json(comments);
 });
 
-//Create a route to get a comment by id
-app.get('/comments/:id', (req, res) => {
-    res.send(comments[req.params.id]);
-});
-
-//Create a route to post a comment
-app.post('/comments', (req, res) => {
-    const comment = {
-        name: req.query.name,
-        comment: req.query.comment
-    };
-    comments.push(comment);
-    res.send(comment);
-});
-
-//Create a route to update a comment
-app.put('/comments/:id', (req, res) => {
-    const comment = {
-        name: req.query.name,
-        comment: req.query.comment
-    };
-    comments[req.params.id] = comment;
-    res.send(comment);
-});
-
-//Create a route to delete a comment
-app.delete('/comments/:id', (req, res) => {
-    comments.splice(req.params.id, 1);
-    res.send(comments);
-});
-
-//Start the server
-app.listen(port, () => {
-    console.log(`Server started on port ${port}`);
-});
+// POST /comments
+app.post('/comments', function(req, res) {
+    console.log('POST /comments');
+    var comment = {
